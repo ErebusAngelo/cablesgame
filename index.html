@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tu Primera Conexión</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body, html {
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            font-family: 'Arial', sans-serif;
+        }
+
+        .container {
+            width: 100%;
+            height: 100vh;
+            background: linear-gradient(to bottom, #ff7b3d 0%, #ff7b3d 65%, #e8943f 65%, #e8943f 100%);
+            background-image: url('assets/inicio/fondo.png');
+            background-size: 100% 100%;
+            background-position: center bottom;
+            background-repeat: no-repeat;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            align-items: center;
+            position: relative;
+        }
+
+        /* Header con logos */
+        .header {
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: clamp(30px, 5vw, 100px);
+            padding: clamp(60px, 8vh, 120px) clamp(20px, 3vw, 60px) clamp(20px, 2vh, 40px);
+            animation: fadeInDown 1s ease-out;
+        }
+
+        .logo {
+            height: clamp(60px, 8vh, 160px);
+            width: auto;
+            opacity: 0;
+            animation: fadeIn 1.2s ease-out 0.3s forwards;
+        }
+
+        .logo:nth-child(2) {
+            animation-delay: 0.5s;
+        }
+
+        /* Botón comenzar */
+        .button-container {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 10;
+        }
+
+        .btn-comenzar {
+            cursor: pointer;
+            width: clamp(250px, 25vw, 500px);
+            height: auto;
+            opacity: 0;
+            animation: fadeInScale 1.5s ease-out 0.8s forwards, pulseGlow 2.5s ease-in-out 2s infinite;
+            filter: drop-shadow(0 10px 30px rgba(0, 0, 0, 0.3));
+            transition: transform 0.3s ease;
+        }
+
+        .btn-comenzar:hover {
+            transform: scale(1.08);
+        }
+
+        .btn-comenzar:active {
+            transform: scale(0.98);
+        }
+
+        /* Personajes */
+        .characters {
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+            padding: 0 clamp(20px, 5vw, 100px) clamp(30px, 4vh, 80px);
+            position: relative;
+        }
+
+        .character {
+            height: clamp(120px, 20vh, 400px);
+            width: auto;
+            opacity: 0;
+        }
+
+        .chica {
+            animation: slideInLeft 1.5s ease-out 1s forwards;
+        }
+
+        .chico {
+            animation: slideInRight 1.5s ease-out 1.2s forwards;
+        }
+
+        /* Animaciones */
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeInScale {
+            from {
+                opacity: 0;
+                transform: scale(0.8);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        @keyframes pulseGlow {
+            0%, 100% {
+                transform: scale(1);
+                filter: drop-shadow(0 10px 30px rgba(0, 0, 0, 0.3));
+            }
+            50% {
+                transform: scale(1.05);
+                filter: drop-shadow(0 15px 40px rgba(255, 255, 255, 0.6)) drop-shadow(0 0 30px rgba(255, 200, 100, 0.8));
+            }
+        }
+
+        @keyframes slideInLeft {
+            from {
+                opacity: 0;
+                transform: translateX(-100px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        @keyframes slideInRight {
+            from {
+                opacity: 0;
+                transform: translateX(100px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        /* Responsive para pantallas pequeñas */
+        @media (max-width: 768px) {
+            .header {
+                flex-direction: column;
+                gap: 20px;
+                padding: 20px;
+            }
+
+            .logo {
+                height: clamp(50px, 10vw, 80px);
+            }
+
+            .btn-comenzar {
+                width: clamp(250px, 70vw, 400px);
+            }
+
+            .character {
+                height: clamp(100px, 25vw, 200px);
+            }
+
+            .characters {
+                padding: 0 20px 20px;
+            }
+        }
+
+        /* Optimización para pantallas LED gigantes (4K y superiores) */
+        @media (min-width: 2560px) {
+            .logo {
+                height: clamp(140px, 10vh, 250px);
+            }
+
+            .btn-comenzar {
+                width: clamp(450px, 22vw, 650px);
+            }
+
+            .character {
+                height: clamp(350px, 22vh, 500px);
+            }
+        }
+
+        /* Optimización para pantallas ultra anchas */
+        @media (min-aspect-ratio: 21/9) {
+            .container {
+                background-size: 100% 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header con logos -->
+        <div class="header">
+            <img src="assets/inicio/logoinnova.svg" alt="San Juan Innova" class="logo">
+            <img src="assets/inicio/logotuprimerconexion.svg" alt="Tu Primera Conexión" class="logo">
+        </div>
+
+        <!-- Botón comenzar -->
+        <div class="button-container">
+            <img src="assets/inicio/botoncomenzar.png" alt="Comenzar" class="btn-comenzar" onclick="comenzar()">
+        </div>
+
+        <!-- Personajes -->
+        <div class="characters">
+            <img src="assets/inicio/chica.svg" alt="Chica" class="character chica">
+            <img src="assets/inicio/chico.svg" alt="Chico" class="character chico">
+        </div>
+    </div>
+
+    <script>
+        function comenzar() {
+            window.location.href = 'game.html';
+        }
+
+        // Prevenir zoom en dispositivos táctiles
+        document.addEventListener('gesturestart', function (e) {
+            e.preventDefault();
+        });
+
+        // Optimización para pantallas táctiles
+        document.querySelector('.btn-comenzar').addEventListener('touchstart', function() {
+            this.style.transform = 'scale(0.98)';
+        });
+
+        document.querySelector('.btn-comenzar').addEventListener('touchend', function() {
+            this.style.transform = 'scale(1)';
+        });
+    </script>
+</body>
+</html>
