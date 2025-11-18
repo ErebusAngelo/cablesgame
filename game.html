@@ -8,6 +8,73 @@
 </head>
 <body>
     <div class="game-container">
+        <!-- Overlay oscuro para tutorial -->
+        <div id="tutorial-overlay" class="tutorial-overlay"></div>
+        
+        <!-- Popups de tutorial -->
+        <div id="popup-1" class="tutorial-popup active" onclick="nextPopup(1)">
+            <img src="assets/popup1.png" alt="Tutorial 1" class="popup-image-full">
+        </div>
+        
+        <div id="popup-2" class="tutorial-popup" onclick="nextPopup(2)">
+            <img src="assets/popup2.png" alt="Tutorial 2" class="popup-image-full">
+        </div>
+        
+        <div id="popup-3" class="tutorial-popup" onclick="nextPopup(3)">
+            <img src="assets/popup3.png" alt="Tutorial 3" class="popup-image-full">
+        </div>
+
+        <!-- Pantalla de selección de objetivo -->
+        <div id="selection-screen" class="selection-screen">
+            <h1 class="selection-title">¿A quién querés darle internet?</h1>
+            <div class="selection-grid">
+                <div class="selection-card" onclick="selectTarget('hospital')">
+                    <div class="selection-image-wrapper">
+                        <img src="assets/hospital.svg" alt="Hospital" class="selection-image">
+                    </div>
+                    <div class="selection-button">HOSPITAL</div>
+                </div>
+                <div class="selection-card selection-card--policia" onclick="selectTarget('policia')">
+                    <div class="selection-image-wrapper">
+                        <img src="assets/policia.svg" alt="Policía" class="selection-image">
+                    </div>
+                    <div class="selection-button">POLICÍA</div>
+                </div>
+                <div class="selection-card" onclick="selectTarget('escuela')">
+                    <div class="selection-image-wrapper">
+                        <img src="assets/escuela.svg" alt="Escuela" class="selection-image">
+                    </div>
+                    <div class="selection-button">ESCUELA</div>
+                </div>
+                <div class="selection-card" onclick="selectTarget('wifi')">
+                    <div class="selection-image-wrapper">
+                        <img src="assets/wifi.svg" alt="Plaza WiFi" class="selection-image">
+                    </div>
+                    <div class="selection-button">PLAZA</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Pantalla de victoria -->
+        <div id="victory-screen" class="victory-screen">
+            <div class="confetti"></div>
+            <h1 class="victory-title">¡FELICIDADES!</h1>
+            <p class="victory-message" id="victory-message">Conectaste la escuela</p>
+            <img id="victory-image" src="assets/escuela.svg" alt="" class="victory-building">
+            <button class="restart-button" onclick="restartGame()">VOLVER A JUGAR</button>
+        </div>
+        <!-- SVG para cables -->
+        <svg id="cables-svg" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 45;">
+            <defs>
+                <filter id="cable-glow">
+                    <feGaussianBlur stdDeviation="2" result="coloredBlur"/>
+                    <feMerge>
+                        <feMergeNode in="coloredBlur"/>
+                        <feMergeNode in="SourceGraphic"/>
+                    </feMerge>
+                </filter>
+            </defs>
+        </svg>
         <!-- Header con logo e instrucciones -->
         <div class="header-game">
             <img src="assets/innovacolor.png" alt="San Juan Innova" class="logo-innova">
@@ -40,26 +107,41 @@
         <div class="game-area">
             <!-- Zona superior con postes -->
             <div class="upper-zone">
-                <div class="pole-container shelter visible" data-type="shelter">
+                <div class="pole-container shelter visible" data-type="shelter" data-connectable="true">
                     <div class="pole-label">SHELTER</div>
                     <img src="assets/shelter.svg" alt="Shelter" class="pole">
+                    <div class="connection-point" data-point="shelter"></div>
                 </div>
-                <div class="pole-container empalme visible" data-type="empalme">
+                <div class="pole-container empalme visible" data-type="empalme" data-connectable="true">
                     <div class="pole-label">CAJA DE EMPALME</div>
                     <img src="assets/empalme.svg" alt="Empalme" class="pole">
+                    <div class="connection-point" data-point="empalme"></div>
                 </div>
-                <div class="pole-container optica visible" data-type="optica">
+                <div class="pole-container optica visible" data-type="optica" data-connectable="true">
                     <div class="pole-label">CAJA TERMINAL ÓPTICA</div>
                     <img src="assets/optica.svg" alt="Óptica" class="pole">
+                    <div class="connection-point" data-point="optica"></div>
                 </div>
             </div>
 
             <!-- Zona inferior con edificios -->
             <div class="buildings-zone">
-                <img src="assets/wifi.svg" alt="WiFi Público" class="building wifi">
-                <img src="assets/policia.svg" alt="Policía" class="building policia">
-                <img src="assets/escuela.svg" alt="Escuela" class="building escuela">
-                <img src="assets/hospital.svg" alt="Hospital" class="building hospital">
+                <div class="building-container" data-building="wifi" data-name="plaza">
+                    <img src="assets/wifi.svg" alt="WiFi Público" class="building wifi">
+                    <div class="connection-point" data-point="wifi"></div>
+                </div>
+                <div class="building-container" data-building="policia" data-name="policía">
+                    <img src="assets/policia.svg" alt="Policía" class="building policia">
+                    <div class="connection-point" data-point="policia"></div>
+                </div>
+                <div class="building-container" data-building="escuela" data-name="escuela">
+                    <img src="assets/escuela.svg" alt="Escuela" class="building escuela">
+                    <div class="connection-point" data-point="escuela"></div>
+                </div>
+                <div class="building-container" data-building="hospital" data-name="hospital">
+                    <img src="assets/hospital.svg" alt="Hospital" class="building hospital">
+                    <div class="connection-point" data-point="hospital"></div>
+                </div>
             </div>
         </div>
 
@@ -177,6 +259,17 @@
                     if (draggedType === targetType) {
                         container.classList.remove('visible');
                         container.classList.add('completed');
+                        // Animación de éxito
+                        container.classList.add('success-feedback');
+                        setTimeout(() => container.classList.remove('success-feedback'), 600);
+                        // Actualizar estado del juego
+                        gameState.structuresPlaced[targetType] = true;
+                        updateNextInFlow();
+                        checkVictory();
+                    } else {
+                        // Animación de error
+                        container.classList.add('error-feedback');
+                        setTimeout(() => container.classList.remove('error-feedback'), 400);
                     }
                 }
                 
@@ -207,6 +300,17 @@
                 if (droppedType === targetType) {
                     container.classList.remove('visible');
                     container.classList.add('completed');
+                    // Animación de éxito
+                    container.classList.add('success-feedback');
+                    setTimeout(() => container.classList.remove('success-feedback'), 600);
+                    // Actualizar estado del juego
+                    gameState.structuresPlaced[targetType] = true;
+                    updateNextInFlow();
+                    checkVictory();
+                } else {
+                    // Animación de error
+                    container.classList.add('error-feedback');
+                    setTimeout(() => container.classList.remove('error-feedback'), 400);
                 }
             });
         });
@@ -222,6 +326,438 @@
                 e.preventDefault();
             }
         }, { passive: false });
+
+        // ========== SISTEMA DE CONEXIÓN DE CABLES ==========
+        const cablesSvg = document.getElementById('cables-svg');
+        const connectionPoints = document.querySelectorAll('.connection-point');
+        let selectedPoint = null;
+        let cables = [];
+        
+        // Orden correcto de conexión
+        const connectionOrder = ['shelter', 'empalme', 'optica'];
+        const buildings = ['wifi', 'policia', 'escuela', 'hospital'];
+        
+        // Función para obtener posición de un punto
+        function getPointPosition(point) {
+            const rect = point.getBoundingClientRect();
+            return {
+                x: rect.left + rect.width / 2,
+                y: rect.top + rect.height / 2
+            };
+        }
+        
+        // Función para dibujar cable con curva orgánica
+        function drawCable(from, to, color = '#1976D2') {
+            const fromPos = getPointPosition(from);
+            const toPos = getPointPosition(to);
+            
+            // Calcular puntos de control para curva Bézier orgánica
+            const dx = toPos.x - fromPos.x;
+            const dy = toPos.y - fromPos.y;
+            const dist = Math.sqrt(dx * dx + dy * dy);
+            
+            // Crear curva más natural
+            const curve = dist * 0.4;
+            const cx1 = fromPos.x + dx * 0.3;
+            const cy1 = fromPos.y + curve;
+            const cx2 = toPos.x - dx * 0.3;
+            const cy2 = toPos.y - curve * 0.5;
+            
+            const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+            const d = `M ${fromPos.x} ${fromPos.y} C ${cx1} ${cy1}, ${cx2} ${cy2}, ${toPos.x} ${toPos.y}`;
+            
+            path.setAttribute('d', d);
+            path.setAttribute('stroke', color);
+            path.setAttribute('stroke-width', '3');
+            path.setAttribute('fill', 'none');
+            path.setAttribute('stroke-linecap', 'round');
+            path.setAttribute('filter', 'url(#cable-glow)');
+            path.setAttribute('class', 'cable-path');
+            path.style.opacity = '0';
+            path.style.transition = 'opacity 0.5s ease';
+            
+            cablesSvg.appendChild(path);
+            
+            // Animar aparición
+            setTimeout(() => path.style.opacity = '1', 10);
+            
+            return {
+                element: path,
+                from: from.getAttribute('data-point'),
+                to: to.getAttribute('data-point')
+            };
+        }
+        
+        // Verificar si se puede conectar
+        function canConnect(fromPoint, toPoint) {
+            const fromType = fromPoint.getAttribute('data-point');
+            const toType = toPoint.getAttribute('data-point');
+            
+            // Verificar conexiones entre estructuras
+            const fromIndex = connectionOrder.indexOf(fromType);
+            const toIndex = connectionOrder.indexOf(toType);
+            
+            if (fromIndex !== -1 && toIndex !== -1) {
+                // Debe ser secuencial: shelter→empalme→optica
+                return toIndex === fromIndex + 1;
+            }
+            
+            // Desde óptica a edificios
+            if (fromType === 'optica' && buildings.includes(toType)) {
+                return true;
+            }
+            
+            return false;
+        }
+        
+        // Manejar click/touch en puntos de conexión
+        connectionPoints.forEach(point => {
+            const handleSelect = (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                
+                // Si no hay punto seleccionado
+                if (!selectedPoint) {
+                    selectedPoint = point;
+                    point.classList.add('active');
+                    return;
+                }
+                
+                // Si es el mismo punto, deseleccionar
+                if (selectedPoint === point) {
+                    selectedPoint.classList.remove('active');
+                    selectedPoint = null;
+                    return;
+                }
+                
+                // Marcar el segundo punto como activo también
+                point.classList.add('active');
+                
+                // Intentar conectar
+                if (canConnect(selectedPoint, point)) {
+                    // Animación de éxito en ambos puntos
+                    selectedPoint.classList.add('connection-success');
+                    point.classList.add('connection-success');
+                    
+                    setTimeout(() => {
+                        const cable = drawCable(selectedPoint, point);
+                        cables.push(cable);
+                        
+                        // Guardar conexión en el estado del juego
+                        gameState.connections.push({
+                            from: cable.from,
+                            to: cable.to
+                        });
+                        
+                        selectedPoint.classList.remove('active', 'connection-success');
+                        selectedPoint.classList.add('connected');
+                        point.classList.remove('active', 'connection-success');
+                        point.classList.add('connected');
+                        selectedPoint = null;
+                        
+                        // Actualizar siguiente en flujo
+                        updateNextInFlow();
+                        
+                        // Verificar victoria después de cada conexión
+                        checkVictory();
+                    }, 500);
+                } else {
+                    // Conexión inválida - quitar active del punto incorrecto
+                    point.classList.remove('active');
+                    // Mantener el primer punto seleccionado
+                    selectedPoint.classList.remove('active');
+                    selectedPoint = point;
+                    point.classList.add('active');
+                }
+            };
+            
+            point.addEventListener('click', handleSelect);
+            point.addEventListener('touchend', handleSelect);
+        });
+        
+        // Actualizar posiciones de cables y líneas guía al redimensionar
+        let resizeTimeout;
+        window.addEventListener('resize', () => {
+            clearTimeout(resizeTimeout);
+            resizeTimeout = setTimeout(() => {
+                // Actualizar cables
+                cables.forEach(cable => {
+                    const fromPoint = document.querySelector(`[data-point="${cable.from}"]`);
+                    const toPoint = document.querySelector(`[data-point="${cable.to}"]`);
+                    if (fromPoint && toPoint) {
+                        const fromPos = getPointPosition(fromPoint);
+                        const toPos = getPointPosition(toPoint);
+                        
+                        const dx = toPos.x - fromPos.x;
+                        const dy = toPos.y - fromPos.y;
+                        const dist = Math.sqrt(dx * dx + dy * dy);
+                        const curve = dist * 0.4;
+                        const cx1 = fromPos.x + dx * 0.3;
+                        const cy1 = fromPos.y + curve;
+                        const cx2 = toPos.x - dx * 0.3;
+                        const cy2 = toPos.y - curve * 0.5;
+                        
+                        const d = `M ${fromPos.x} ${fromPos.y} C ${cx1} ${cy1}, ${cx2} ${cy2}, ${toPos.x} ${toPos.y}`;
+                        cable.element.setAttribute('d', d);
+                    }
+                });
+
+                // Actualizar líneas guía
+                const guideLine = document.querySelector('.connection-guide-line');
+                if (guideLine) {
+                    updateConnectionGuidance();
+                }
+            }, 100);
+        });
+
+        // ========== SISTEMA DE TUTORIAL ==========
+        let currentPopup = 1;
+        
+        function nextPopup(current) {
+            const currentElement = document.getElementById(`popup-${current}`);
+            currentElement.classList.remove('active');
+            
+            if (current < 3) {
+                // Mostrar siguiente popup
+                currentPopup = current + 1;
+                const nextElement = document.getElementById(`popup-${currentPopup}`);
+                nextElement.classList.add('active');
+            } else {
+                // Cerrar tutorial y mostrar pantalla de selecci\u00f3n
+                const overlay = document.getElementById('tutorial-overlay');
+                overlay.classList.add('hidden');
+                setTimeout(() => {
+                    overlay.style.display = 'none';
+                    document.getElementById('selection-screen').classList.add('active');
+                }, 500);
+            }
+        }
+
+        // ========== SISTEMA DE SELECCI\u00d3N Y VICTORIA ==========
+        let selectedTarget = null;
+        let gameState = {
+            structuresPlaced: {
+                shelter: false,
+                empalme: false,
+                optica: false
+            },
+            connections: []
+        };
+
+        const targetMessages = {
+            hospital: { name: 'hospital', message: 'Conectaste el hospital' },
+            policia: { name: 'polic\u00eda', message: 'Conectaste la polic\u00eda' },
+            escuela: { name: 'escuela', message: 'Conectaste la escuela' },
+            wifi: { name: 'plaza', message: 'Conectaste la plaza' }
+        };
+
+        function selectTarget(target) {
+            selectedTarget = target;
+            
+            // Animar la tarjeta seleccionada
+            const cards = document.querySelectorAll('.selection-card');
+            const clickedCard = event.target.closest('.selection-card');
+            
+            if (clickedCard) {
+                clickedCard.classList.add('selected');
+            }
+            
+            // Animar salida de la pantalla de selección
+            const selectionScreen = document.getElementById('selection-screen');
+            selectionScreen.classList.add('closing');
+            
+            setTimeout(() => {
+                selectionScreen.classList.remove('active', 'closing');
+                selectionScreen.style.display = 'none';
+                
+                // Resaltar el edificio seleccionado
+                const targetContainer = document.querySelector(`[data-building="${target}"]`);
+                if (targetContainer) {
+                    targetContainer.classList.add('target-selected');
+                }
+                
+                // Iniciar el flujo visual guiado
+                updateNextInFlow();
+            }, 600);
+        }
+
+        function updateNextInFlow() {
+            // Limpiar resaltados anteriores
+            document.querySelectorAll('.pole-container').forEach(p => {
+                p.classList.remove('next-in-flow', 'waiting-for-drop');
+            });
+            document.querySelectorAll('.drag-item').forEach(d => {
+                d.classList.remove('next-to-place');
+            });
+            document.querySelectorAll('.connection-point').forEach(cp => {
+                cp.classList.remove('next-connection');
+            });
+            
+            // Determinar qué estructura debe resaltarse
+            if (!gameState.structuresPlaced.shelter) {
+                // Resaltar shelter container y drag item
+                const shelterContainer = document.querySelector('[data-type="shelter"]');
+                const shelterDragItem = document.querySelector('.drag-item[data-type="shelter"]');
+                if (shelterContainer) {
+                    shelterContainer.classList.add('next-in-flow', 'waiting-for-drop');
+                }
+                if (shelterDragItem) {
+                    shelterDragItem.classList.add('next-to-place');
+                }
+            } else if (!gameState.structuresPlaced.empalme) {
+                // Resaltar empalme
+                const empalmeContainer = document.querySelector('[data-type="empalme"]');
+                const empalmeDragItem = document.querySelector('.drag-item[data-type="empalme"]');
+                if (empalmeContainer) {
+                    empalmeContainer.classList.add('next-in-flow', 'waiting-for-drop');
+                }
+                if (empalmeDragItem) {
+                    empalmeDragItem.classList.add('next-to-place');
+                }
+            } else if (!gameState.structuresPlaced.optica) {
+                // Resaltar óptica
+                const opticaContainer = document.querySelector('[data-type="optica"]');
+                const opticaDragItem = document.querySelector('.drag-item[data-type="optica"]');
+                if (opticaContainer) {
+                    opticaContainer.classList.add('next-in-flow', 'waiting-for-drop');
+                }
+                if (opticaDragItem) {
+                    opticaDragItem.classList.add('next-to-place');
+                }
+            } else {
+                // Todas las estructuras están colocadas, resaltar conexiones
+                updateConnectionGuidance();
+            }
+        }
+
+        function updateConnectionGuidance() {
+            // Limpiar resaltados de conexión
+            document.querySelectorAll('.connection-point').forEach(cp => {
+                cp.classList.remove('next-connection');
+            });
+
+            // Limpiar líneas guía anteriores
+            document.querySelectorAll('.connection-guide-line').forEach(line => {
+                line.remove();
+            });
+
+            const hasConnection = (from, to) => {
+                return gameState.connections.some(c => 
+                    (c.from === from && c.to === to) || (c.from === to && c.to === from)
+                );
+            };
+
+            // Verificar qué conexión falta y dibujar línea guía
+            let fromPoint = null;
+            let toPoint = null;
+
+            if (!hasConnection('shelter', 'empalme')) {
+                // Resaltar puntos shelter y empalme
+                fromPoint = document.querySelector('[data-point="shelter"]');
+                toPoint = document.querySelector('[data-point="empalme"]');
+            } else if (!hasConnection('empalme', 'optica')) {
+                // Resaltar puntos empalme y óptica
+                fromPoint = document.querySelector('[data-point="empalme"]');
+                toPoint = document.querySelector('[data-point="optica"]');
+            } else if (!hasConnection('optica', selectedTarget)) {
+                // Resaltar puntos óptica y edificio objetivo
+                fromPoint = document.querySelector('[data-point="optica"]');
+                toPoint = document.querySelector(`[data-point="${selectedTarget}"]`);
+            }
+
+            if (fromPoint && toPoint) {
+                fromPoint.classList.add('next-connection');
+                toPoint.classList.add('next-connection');
+                
+                // Dibujar línea guía animada
+                drawGuideLine(fromPoint, toPoint);
+            }
+        }
+
+        function drawGuideLine(from, to) {
+            const fromPos = getPointPosition(from);
+            const toPos = getPointPosition(to);
+            
+            const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+            line.setAttribute('x1', fromPos.x);
+            line.setAttribute('y1', fromPos.y);
+            line.setAttribute('x2', toPos.x);
+            line.setAttribute('y2', toPos.y);
+            line.setAttribute('class', 'connection-guide-line');
+            
+            cablesSvg.appendChild(line);
+        }
+
+        function checkVictory() {
+            // Verificar que las 3 estructuras estén colocadas
+            const allStructuresPlaced = gameState.structuresPlaced.shelter && 
+                                       gameState.structuresPlaced.empalme && 
+                                       gameState.structuresPlaced.optica;
+            
+            if (!allStructuresPlaced) return false;
+
+            // Verificar conexiones necesarias
+            const hasConnection = (from, to) => {
+                return gameState.connections.some(c => 
+                    (c.from === from && c.to === to) || (c.from === to && c.to === from)
+                );
+            };
+
+            const shelterToEmpalme = hasConnection('shelter', 'empalme');
+            const empalmeToOptica = hasConnection('empalme', 'optica');
+            const opticaToTarget = hasConnection('optica', selectedTarget);
+
+            if (shelterToEmpalme && empalmeToOptica && opticaToTarget) {
+                showVictory();
+                return true;
+            }
+
+            return false;
+        }
+
+        function showVictory() {
+            const victoryScreen = document.getElementById('victory-screen');
+            const victoryMessage = document.getElementById('victory-message');
+            const victoryImage = document.getElementById('victory-image');
+            
+            const targetInfo = targetMessages[selectedTarget];
+            victoryMessage.textContent = targetInfo.message;
+            victoryImage.src = `assets/${selectedTarget}.svg`;
+            
+            // Crear confetti dinámico
+            createConfetti();
+            
+            victoryScreen.classList.add('active');
+            
+            // Reiniciar automáticamente después de 15 segundos
+            setTimeout(() => {
+                restartGame();
+            }, 15000);
+        }
+
+        function restartGame() {
+            // Volver a la pantalla inicial
+            window.location.href = 'index.html';
+        }
+
+        function createConfetti() {
+            const confettiContainer = document.querySelector('.confetti');
+            const colors = ['#FF6B35', '#FF8C42', '#FFA500', '#FFD700', '#FF4500'];
+            
+            for (let i = 0; i < 50; i++) {
+                const confetti = document.createElement('div');
+                confetti.style.position = 'absolute';
+                confetti.style.width = Math.random() * 10 + 5 + 'px';
+                confetti.style.height = Math.random() * 20 + 10 + 'px';
+                confetti.style.background = colors[Math.floor(Math.random() * colors.length)];
+                confetti.style.left = Math.random() * 100 + '%';
+                confetti.style.top = '-20px';
+                confetti.style.animation = `confetti-fall ${Math.random() * 3 + 2}s linear infinite`;
+                confetti.style.animationDelay = Math.random() * 2 + 's';
+                confetti.style.opacity = Math.random() * 0.7 + 0.3;
+                confettiContainer.appendChild(confetti);
+            }
+        }
     </script>
 <!-- Code injected by live-server -->
 <script>

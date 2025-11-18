@@ -194,6 +194,13 @@ body, html {
     padding: 0 3% 0;
 }
 
+.building-container {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
 .building {
     height: clamp(100px, 18vh, 250px);
     width: auto;
@@ -218,6 +225,7 @@ body, html {
     gap: 8px;
     opacity: 0;
     animation: slideUp 1.2s ease-out forwards;
+    position: relative;
 }
 
 .pole-container.visible {
@@ -226,6 +234,114 @@ body, html {
 
 .pole-container.completed {
     opacity: 1 !important;
+    animation: none !important;
+}
+
+/* Puntos de conexión */
+.connection-point {
+    position: absolute;
+    width: 20px;
+    height: 20px;
+    background: #2196F3;
+    border: 3px solid white;
+    border-radius: 50%;
+    bottom: 50%;
+    left: 50%;
+    transform: translate(-50%, 50%);
+    cursor: pointer;
+    opacity: 0;
+    pointer-events: none;
+    transition: all 0.3s ease;
+    z-index: 100;
+    box-shadow: 0 0 10px rgba(33, 150, 243, 0.5);
+}
+
+/* Shelter - punto en el medio */
+.pole-container.shelter .connection-point {
+    bottom: 50%;
+}
+
+/* Empalme y Óptica - puntos arriba */
+.pole-container.empalme .connection-point,
+.pole-container.optica .connection-point {
+    bottom: auto;
+    top: 10%;
+    transform: translate(-50%, 0);
+}
+
+/* Edificios - puntos en la parte superior */
+.building-container .connection-point {
+    bottom: auto;
+    top: 20%;
+    transform: translate(-50%, 0);
+}
+
+.pole-container.completed .connection-point {
+    opacity: 1 !important;
+    pointer-events: all !important;
+}
+
+/* Los edificios siempre muestran puntos después de animación */
+.building-container .connection-point {
+    opacity: 1 !important;
+    pointer-events: all !important;
+}
+
+@keyframes fadeInPoint {
+    to {
+        opacity: 1;
+    }
+}
+
+.connection-point:hover {
+    transform: translate(-50%, 50%) scale(1.3);
+    box-shadow: 0 0 20px rgba(33, 150, 243, 0.8);
+}
+
+.pole-container.empalme .connection-point:hover,
+.pole-container.optica .connection-point:hover,
+.building-container .connection-point:hover {
+    transform: translate(-50%, 0) scale(1.3);
+}
+
+.connection-point.active {
+    background: #FF9800 !important;
+    border-color: #FF6B35 !important;
+    animation: pulse 0.8s ease-in-out infinite;
+    z-index: 150 !important;
+}
+
+.connection-point.connected {
+    background: #4CAF50;
+    border-color: white;
+}
+
+@keyframes pulse {
+    0%, 100% {
+        box-shadow: 0 0 10px rgba(255, 152, 0, 0.5);
+        transform: scale(1);
+    }
+    50% {
+        box-shadow: 0 0 25px rgba(255, 152, 0, 1), 0 0 40px rgba(255, 107, 53, 0.6);
+        transform: scale(1.3);
+    }
+}
+
+.pole-container.empalme .connection-point.active,
+.pole-container.optica .connection-point.active,
+.building-container .connection-point.active {
+    animation: pulseTop 0.8s ease-in-out infinite;
+}
+
+@keyframes pulseTop {
+    0%, 100% {
+        transform: translate(-50%, 0) scale(1);
+        box-shadow: 0 0 10px rgba(255, 152, 0, 0.5);
+    }
+    50% {
+        transform: translate(-50%, 0) scale(1.3);
+        box-shadow: 0 0 25px rgba(255, 152, 0, 1), 0 0 40px rgba(255, 107, 53, 0.6);
+    }
 }
 
 .pole-container.shelter { animation-delay: 0.6s; }
@@ -496,4 +612,524 @@ body, html {
     .logo-innova {
         width: clamp(180px, 12vw, 280px);
     }
+}
+
+/* ========== TUTORIAL OVERLAY Y POPUPS ========== */
+.tutorial-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.85);
+    z-index: 200;
+    transition: opacity 0.5s ease;
+}
+
+.tutorial-overlay.hidden {
+    opacity: 0;
+}
+
+.tutorial-popup {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) scale(0.8) rotateY(90deg);
+    z-index: 201;
+    opacity: 0;
+    pointer-events: none;
+    transition: all 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+    cursor: pointer;
+}
+
+.tutorial-popup.active {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1) rotateY(0deg);
+    pointer-events: all;
+    animation: popupFloat 3s ease-in-out infinite;
+}
+
+@keyframes popupFloat {
+    0%, 100% {
+        transform: translate(-50%, -50%) scale(1) rotateY(0deg);
+    }
+    50% {
+        transform: translate(-50%, -52%) scale(1.02) rotateY(0deg);
+    }
+}
+
+.popup-image-full {
+    max-width: clamp(320px, 50vw, 600px);
+    width: 100%;
+    height: auto;
+    display: block;
+    filter: drop-shadow(0 10px 30px rgba(0, 0, 0, 0.5));
+}
+
+@media (max-width: 768px) {
+    .popup-image-full {
+        max-width: 90vw;
+    }
+}
+
+/* ========== PANTALLA DE SELECCI\u00d3N ========== */
+.selection-screen {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.9);
+    z-index: 202;
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    opacity: 0;
+    transition: opacity 0.5s ease;
+}
+
+.selection-screen.active {
+    display: flex;
+    animation: fadeInScreen 0.5s ease-out forwards;
+}
+
+.selection-screen.closing {
+    animation: fadeOutScreen 0.6s ease-out forwards;
+}
+
+@keyframes fadeInScreen {
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes fadeOutScreen {
+    to {
+        opacity: 0;
+    }
+}
+
+.selection-title {
+    color: white;
+    font-size: clamp(24px, 4vw, 48px);
+    font-weight: bold;
+    margin-bottom: clamp(30px, 5vh, 60px);
+    text-align: center;
+}
+
+.selection-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: clamp(20px, 3vw, 40px);
+    max-width: 900px;
+    width: 100%;
+}
+
+.selection-card {
+    background: white;
+    border-radius: 20px;
+    padding: clamp(25px, 3vh, 35px);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-between;
+    gap: clamp(15px, 2vh, 20px);
+    cursor: pointer;
+    transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+    aspect-ratio: 1;
+    min-height: 200px;
+    opacity: 0;
+    transform: scale(0.8) translateY(30px);
+    animation: cardFadeIn 0.6s ease-out forwards;
+}
+
+.selection-card:nth-child(1) { animation-delay: 0.1s; }
+.selection-card:nth-child(2) { animation-delay: 0.2s; }
+.selection-card:nth-child(3) { animation-delay: 0.3s; }
+.selection-card:nth-child(4) { animation-delay: 0.4s; }
+
+@keyframes cardFadeIn {
+    to {
+        opacity: 1;
+        transform: scale(1) translateY(0);
+    }
+}
+
+.selection-card:hover {
+    transform: translateY(-10px) scale(1.05);
+    box-shadow: 0 8px 30px rgba(255, 107, 53, 0.5);
+}
+
+.selection-card:active {
+    transform: translateY(-5px) scale(0.98);
+}
+
+.selection-card.selected {
+    animation: cardSelected 0.6s ease-out forwards;
+}
+
+@keyframes cardSelected {
+    0% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.1);
+        box-shadow: 0 10px 40px rgba(255, 107, 53, 0.8);
+    }
+    100% {
+        transform: scale(0.8);
+        opacity: 0;
+    }
+}
+
+.selection-image-wrapper {
+    width: 100%;
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.selection-image {
+    max-width: 90%;
+    max-height: 140px;
+    width: auto;
+    height: auto;
+    object-fit: contain;
+    animation: selectionAssetPulse 2.4s ease-in-out infinite;
+}
+
+/* WiFi/Plaza más grande */
+.selection-card:nth-child(4) .selection-image {
+    max-height: 220px;
+    max-width: 120%;
+    transform: scale(1.15);
+}
+
+@keyframes selectionAssetPulse {
+    0%, 100% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.06);
+    }
+}
+
+.selection-card--policia .selection-image {
+    max-height: 170px;
+    max-width: 110%;
+    transform: scale(1.08);
+}
+
+.selection-button {
+    background: linear-gradient(135deg, #FF6B35 0%, #FF8C42 100%);
+    color: white;
+    padding: clamp(10px, 1.5vh, 15px) clamp(20px, 3vw, 40px);
+    border-radius: 12px;
+    font-size: clamp(14px, 1.8vw, 20px);
+    font-weight: bold;
+    width: 100%;
+    text-align: center;
+}
+
+/* ========== PANTALLA DE VICTORIA ========== */
+.victory-screen {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.95);
+    z-index: 300;
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+}
+
+.victory-screen.active {
+    display: flex;
+}
+
+.victory-title {
+    color: white;
+    font-size: clamp(36px, 6vw, 72px);
+    font-weight: bold;
+    margin-bottom: clamp(15px, 2vh, 30px);
+    text-align: center;
+    z-index: 301;
+}
+
+.victory-message {
+    color: white;
+    font-size: clamp(20px, 3vw, 36px);
+    margin-bottom: clamp(30px, 4vh, 50px);
+    text-align: center;
+    z-index: 301;
+}
+
+.victory-building {
+    width: clamp(200px, 30vw, 400px);
+    height: auto;
+    z-index: 301;
+    filter: drop-shadow(0 10px 30px rgba(255, 255, 255, 0.3));
+}
+
+.restart-button {
+    background: linear-gradient(135deg, #FF6B35 0%, #FF8C42 100%);
+    color: white;
+    padding: clamp(12px, 2vh, 18px) clamp(40px, 6vw, 80px);
+    border: none;
+    border-radius: 50px;
+    font-size: clamp(16px, 2.5vw, 28px);
+    font-weight: bold;
+    cursor: pointer;
+    margin-top: clamp(20px, 3vh, 40px);
+    z-index: 301;
+    box-shadow: 0 4px 20px rgba(255, 107, 53, 0.4);
+    transition: all 0.3s ease;
+}
+
+.restart-button:hover {
+    transform: scale(1.05);
+    box-shadow: 0 6px 25px rgba(255, 107, 53, 0.6);
+}
+
+.restart-button:active {
+    transform: scale(0.98);
+}
+
+/* Confetti */
+.confetti {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    z-index: 300;
+    pointer-events: none;
+}
+
+.confetti::before,
+.confetti::after {
+    content: '';
+    position: absolute;
+    width: 10px;
+    height: 20px;
+    background: #FF6B35;
+    animation: confetti-fall 3s linear infinite;
+}
+
+@keyframes confetti-fall {
+    0% {
+        transform: translateY(-100%) rotate(0deg);
+        opacity: 1;
+    }
+    100% {
+        transform: translateY(100vh) rotate(360deg);
+        opacity: 0;
+    }
+}
+
+/* Animación de flujo de energía en cables */
+@keyframes cableFlow {
+    0% {
+        stroke-dashoffset: 0;
+    }
+    100% {
+        stroke-dashoffset: 40;
+    }
+}
+
+.cable-path {
+    stroke-dasharray: 10 10;
+    animation: cableFlow 1.5s linear infinite;
+}
+
+@media (max-width: 768px) {
+    .selection-grid {
+        grid-template-columns: 1fr;
+        gap: 20px;
+    }
+}
+
+/* Resaltar edificio seleccionado como objetivo */
+.building-container.target-selected {
+    animation: targetPulse 2s ease-in-out infinite;
+}
+
+@keyframes targetPulse {
+    0%, 100% {
+        filter: drop-shadow(0 0 10px rgba(255, 215, 0, 0.6));
+    }
+    50% {
+        filter: drop-shadow(0 0 30px rgba(255, 215, 0, 1));
+    }
+}
+
+/* Resaltar siguiente estructura en el flujo */
+.pole-container.next-in-flow {
+    animation: nextStructurePulse 2s ease-in-out infinite;
+}
+
+@keyframes nextStructurePulse {
+    0%, 100% {
+        filter: drop-shadow(0 0 15px rgba(33, 150, 243, 0.6));
+    }
+    50% {
+        filter: drop-shadow(0 0 35px rgba(33, 150, 243, 1));
+    }
+}
+
+/* Animación de éxito al colocar estructura - SIN movimiento vertical */
+@keyframes successPlace {
+    0% {
+        filter: drop-shadow(0 0 10px rgba(76, 175, 80, 0.3));
+    }
+    50% {
+        filter: drop-shadow(0 0 30px rgba(76, 175, 80, 1)) brightness(1.2);
+    }
+    100% {
+        filter: drop-shadow(0 0 10px rgba(76, 175, 80, 0.3));
+    }
+}
+
+.pole-container.success-feedback {
+    animation: successPlace 0.6s ease-out !important;
+}
+
+/* Animaci\u00f3n de error */
+@keyframes errorShake {
+    0%, 100% {
+        transform: translateX(0);
+    }
+    25% {
+        transform: translateX(-10px);
+    }
+    75% {
+        transform: translateX(10px);
+    }
+}
+
+.pole-container.error-feedback {
+    animation: errorShake 0.4s ease-out;
+}
+
+/* Animaci\u00f3n de conexi\u00f3n completada */
+@keyframes connectionSuccess {
+    0% {
+        transform: scale(1);
+        filter: brightness(1);
+    }
+    50% {
+        transform: scale(1.1);
+        filter: brightness(1.5) drop-shadow(0 0 20px rgba(33, 150, 243, 1));
+    }
+    100% {
+        transform: scale(1);
+        filter: brightness(1);
+    }
+}
+
+.connection-point.connection-success {
+    animation: connectionSuccess 0.5s ease-out;
+}
+
+/* Animación para drag items que deben arrastrarse */
+@keyframes dragItemPulse {
+    0%, 100% {
+        transform: scale(1);
+        box-shadow: 0 2px 10px rgba(255, 107, 53, 0.3);
+    }
+    50% {
+        transform: scale(1.05);
+        box-shadow: 0 4px 20px rgba(255, 107, 53, 0.8);
+    }
+}
+
+.drag-item.next-to-place {
+    animation: dragItemPulse 2s ease-in-out infinite;
+}
+
+/* Animación para pole containers que esperan ser llenados */
+@keyframes containerPulse {
+    0%, 100% {
+        filter: drop-shadow(0 0 5px rgba(255, 215, 0, 0.4));
+    }
+    50% {
+        filter: drop-shadow(0 0 20px rgba(255, 215, 0, 1));
+    }
+}
+
+.pole-container.waiting-for-drop {
+    animation: containerPulse 2s ease-in-out infinite;
+}
+
+/* Resplandor en puntos de conexión que deben conectarse */
+@keyframes connectionPointGlowTop {
+    0%, 100% {
+        box-shadow: 0 0 10px rgba(33, 150, 243, 0.5);
+        transform: translate(-50%, 0) scale(1);
+        opacity: 1;
+    }
+    50% {
+        box-shadow: 0 0 25px rgba(33, 150, 243, 1), 0 0 40px rgba(33, 150, 243, 0.6);
+        transform: translate(-50%, 0) scale(1.2);
+        opacity: 1;
+    }
+}
+
+.pole-container.empalme .connection-point.next-connection,
+.pole-container.optica .connection-point.next-connection,
+.building-container .connection-point.next-connection {
+    animation: connectionPointGlowTop 2s ease-in-out infinite;
+    opacity: 1 !important;
+}
+
+@keyframes connectionPointGlowBottom {
+    0%, 100% {
+        box-shadow: 0 0 10px rgba(33, 150, 243, 0.5);
+        transform: translate(-50%, 50%) scale(1);
+        opacity: 1;
+    }
+    50% {
+        box-shadow: 0 0 25px rgba(33, 150, 243, 1), 0 0 40px rgba(33, 150, 243, 0.6);
+        transform: translate(-50%, 50%) scale(1.2);
+        opacity: 1;
+    }
+}
+
+.pole-container.shelter .connection-point.next-connection {
+    animation: connectionPointGlowBottom 2s ease-in-out infinite;
+    opacity: 1 !important;
+}
+
+/* Animación de línea guía entre puntos de conexión */
+@keyframes drawConnectionLine {
+    0% {
+        stroke-dashoffset: 100;
+        opacity: 0.3;
+    }
+    50% {
+        opacity: 0.8;
+    }
+    100% {
+        stroke-dashoffset: 0;
+        opacity: 0.3;
+    }
+}
+
+.connection-guide-line {
+    stroke: #FFD700;
+    stroke-width: 2;
+    stroke-dasharray: 10 5;
+    fill: none;
+    opacity: 0.6;
+    animation: drawConnectionLine 2s ease-in-out infinite;
+    pointer-events: none;
 }
