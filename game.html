@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tu Primera Conexión - Juego</title>
+    <link rel="stylesheet" href="game.css">
+</head>
+<body>
+    <div class="game-container">
+        <!-- Header con logo e instrucciones -->
+        <div class="header-game">
+            <img src="assets/innovacolor.png" alt="San Juan Innova" class="logo-innova">
+            <div class="instructions">
+                <h2>Ubicá los elementos arrastrándolos a su lugar luego conectá la fibra óptica</h2>
+            </div>
+        </div>
+
+        <!-- Sol -->
+        <img src="assets/sol.svg" alt="Sol" class="sun">
+
+        <!-- Nubes -->
+        <div class="clouds">
+            <img src="assets/nubes.png" alt="Nube" class="cloud cloud1">
+            <img src="assets/nubes.png" alt="Nube" class="cloud cloud2">
+            <img src="assets/nubes.png" alt="Nube" class="cloud cloud3">
+            <img src="assets/nubes.png" alt="Nube" class="cloud cloud4">
+            <img src="assets/nubes.png" alt="Nube" class="cloud cloud5">
+            <img src="assets/nubes.png" alt="Nube" class="cloud cloud6">
+        </div>
+
+        <!-- Pájaros -->
+        <div class="birds">
+            <img src="assets/pajaro.svg" alt="Pájaro" class="bird bird1">
+            <img src="assets/pajaro2.svg" alt="Pájaro" class="bird bird2">
+            <img src="assets/pajaro3.svg" alt="Pájaro" class="bird bird3">
+        </div>
+
+        <!-- Área de juego -->
+        <div class="game-area">
+            <!-- Zona superior con postes -->
+            <div class="upper-zone">
+                <div class="pole-container shelter">
+                    <div class="pole-label">SHELTER</div>
+                    <img src="assets/shelter.svg" alt="Shelter" class="pole">
+                </div>
+                <div class="pole-container empalme">
+                    <div class="pole-label">CAJA DE EMPALME</div>
+                    <img src="assets/empalme.svg" alt="Empalme" class="pole">
+                </div>
+                <div class="pole-container optica">
+                    <div class="pole-label">CAJA TERMINAL ÓPTICA</div>
+                    <img src="assets/optica.svg" alt="Óptica" class="pole">
+                </div>
+            </div>
+
+            <!-- Zona inferior con edificios -->
+            <div class="buildings-zone">
+                <img src="assets/policia.svg" alt="Policía" class="building wifi">
+                <img src="assets/escuela.svg" alt="Escuela" class="building policia">
+                <img src="assets/hospital.svg" alt="Hospital" class="building escuela">
+            </div>
+        </div>
+
+        <!-- Personajes -->
+        <div class="characters-game">
+            <img src="assets/inicio/chica.svg" alt="Chica" class="character-game char-left char-1">
+            <img src="assets/inicio/chico.svg" alt="Chico" class="character-game char-right char-3">
+            <img src="assets/chicaynena.svg" alt="Chica con nena" class="character-game char-special">
+        </div>
+
+        <!-- Panel de arrastre -->
+        <div class="drag-panel">
+            <div class="drag-item" draggable="true">
+                <img src="assets/shelter.svg" alt="Shelter" style="max-width: 100%; max-height: 70%;">
+                <div class="drag-label">SHELTER</div>
+            </div>
+            <div class="drag-item" draggable="true">
+                <img src="assets/empalme.svg" alt="Empalme" style="max-width: 100%; max-height: 70%;">
+                <div class="drag-label">CAJA DE EMPALME</div>
+            </div>
+            <div class="drag-item" draggable="true">
+                <img src="assets/optica.svg" alt="Óptica" style="max-width: 100%; max-height: 70%;">
+                <div class="drag-label">CAJA TERMINAL ÓPTICA</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Funcionalidad de drag and drop
+        const dragItems = document.querySelectorAll('.drag-item');
+        
+        dragItems.forEach(item => {
+            item.addEventListener('dragstart', (e) => {
+                e.dataTransfer.effectAllowed = 'move';
+                e.dataTransfer.setData('text/html', item.innerHTML);
+                item.style.opacity = '0.5';
+            });
+
+            item.addEventListener('dragend', (e) => {
+                item.style.opacity = '1';
+            });
+
+            // Soporte táctil
+            let touchStartX, touchStartY;
+            
+            item.addEventListener('touchstart', (e) => {
+                const touch = e.touches[0];
+                touchStartX = touch.clientX;
+                touchStartY = touch.clientY;
+                item.style.transform = 'scale(1.1)';
+            });
+
+            item.addEventListener('touchend', (e) => {
+                item.style.transform = 'scale(1)';
+            });
+        });
+
+        // Prevenir zoom en táctil
+        document.addEventListener('gesturestart', (e) => {
+            e.preventDefault();
+        });
+    </script>
+<!-- Code injected by live-server -->
+<script>
+	// <![CDATA[  <-- For SVG support
+	if ('WebSocket' in window) {
+		(function () {
+			function refreshCSS() {
+				var sheets = [].slice.call(document.getElementsByTagName("link"));
+				var head = document.getElementsByTagName("head")[0];
+				for (var i = 0; i < sheets.length; ++i) {
+					var elem = sheets[i];
+					var parent = elem.parentElement || head;
+					parent.removeChild(elem);
+					var rel = elem.rel;
+					if (elem.href && typeof rel != "string" || rel.length == 0 || rel.toLowerCase() == "stylesheet") {
+						var url = elem.href.replace(/(&|\?)_cacheOverride=\d+/, '');
+						elem.href = url + (url.indexOf('?') >= 0 ? '&' : '?') + '_cacheOverride=' + (new Date().valueOf());
+					}
+					parent.appendChild(elem);
+				}
+			}
+			var protocol = window.location.protocol === 'http:' ? 'ws://' : 'wss://';
+			var address = protocol + window.location.host + window.location.pathname + '/ws';
+			var socket = new WebSocket(address);
+			socket.onmessage = function (msg) {
+				if (msg.data == 'reload') window.location.reload();
+				else if (msg.data == 'refreshcss') refreshCSS();
+			};
+			if (sessionStorage && !sessionStorage.getItem('IsThisFirstTime_Log_From_LiveServer')) {
+				console.log('Live reload enabled.');
+				sessionStorage.setItem('IsThisFirstTime_Log_From_LiveServer', true);
+			}
+		})();
+	}
+	else {
+		console.error('Upgrade your browser. This Browser is NOT supported WebSocket for Live-Reloading.');
+	}
+	// ]]>
+</script>
+</body>
+</html>
