@@ -78,9 +78,7 @@
         <!-- Header con logo e instrucciones -->
         <div class="header-game">
             <img src="assets/innovacolor.png" alt="San Juan Innova" class="logo-innova">
-            <div class="instructions">
-                <h2>Ubicá los elementos arrastrándolos a su lugar luego conectá la fibra óptica</h2>
-            </div>
+            <img src="assets/parrafo.svg" alt="Instrucciones" class="instructions-image">
         </div>
 
         <!-- Sol -->
@@ -108,17 +106,17 @@
             <!-- Zona superior con postes -->
             <div class="upper-zone">
                 <div class="pole-container shelter visible" data-type="shelter" data-connectable="true">
-                    <div class="pole-label">SHELTER</div>
+                    <img src="assets/text/text/sheltertext.svg" alt="Etiqueta Shelter" class="structure-label">
                     <img src="assets/shelter.svg" alt="Shelter" class="pole">
                     <div class="connection-point" data-point="shelter"></div>
                 </div>
                 <div class="pole-container empalme visible" data-type="empalme" data-connectable="true">
-                    <div class="pole-label">CAJA DE EMPALME</div>
+                    <img src="assets/text/text/empalmetext.svg" alt="Etiqueta Empalme" class="structure-label">
                     <img src="assets/empalme.svg" alt="Empalme" class="pole">
                     <div class="connection-point" data-point="empalme"></div>
                 </div>
                 <div class="pole-container optica visible" data-type="optica" data-connectable="true">
-                    <div class="pole-label">CAJA TERMINAL ÓPTICA</div>
+                    <img src="assets/text/text/opticatext.svg" alt="Etiqueta Óptica" class="structure-label">
                     <img src="assets/optica.svg" alt="Óptica" class="pole">
                     <div class="connection-point" data-point="optica"></div>
                 </div>
@@ -127,18 +125,22 @@
             <!-- Zona inferior con edificios -->
             <div class="buildings-zone">
                 <div class="building-container" data-building="wifi" data-name="plaza">
+                    <img src="assets/text/text/wifitext.svg" alt="Etiqueta WiFi" class="building-label">
                     <img src="assets/wifi.svg" alt="WiFi Público" class="building wifi">
                     <div class="connection-point" data-point="wifi"></div>
                 </div>
                 <div class="building-container" data-building="policia" data-name="policía">
+                    <img src="assets/text/text/policiatext.svg" alt="Etiqueta Policía" class="building-label">
                     <img src="assets/policia.svg" alt="Policía" class="building policia">
                     <div class="connection-point" data-point="policia"></div>
                 </div>
                 <div class="building-container" data-building="escuela" data-name="escuela">
+                    <img src="assets/text/text/escueatext.svg" alt="Etiqueta Escuela" class="building-label">
                     <img src="assets/escuela.svg" alt="Escuela" class="building escuela">
                     <div class="connection-point" data-point="escuela"></div>
                 </div>
                 <div class="building-container" data-building="hospital" data-name="hospital">
+                    <img src="assets/text/text/hospitaltext.svg" alt="Etiqueta Hospital" class="building-label">
                     <img src="assets/hospital.svg" alt="Hospital" class="building hospital">
                     <div class="connection-point" data-point="hospital"></div>
                 </div>
@@ -147,8 +149,8 @@
 
         <!-- Personajes -->
         <div class="characters-game">
-            <img src="assets/inicio/chica.svg" alt="Chica" class="character-game char-left char-1">
-            <img src="assets/inicio/chico.svg" alt="Chico" class="character-game char-right char-3">
+            <img src="assets/inicio/chico.svg" alt="Chico" class="character-game char-left char-3">
+            <img src="assets/inicio/chica.svg" alt="Chica" class="character-game char-right char-1">
             <img src="assets/chicaynena.svg" alt="Chica con nena" class="character-game char-special">
         </div>
 
@@ -156,15 +158,12 @@
         <div class="drag-panel">
             <div class="drag-item" draggable="true" data-type="shelter">
                 <img src="assets/shelter.svg" alt="Shelter" style="max-width: 100%; max-height: 70%;">
-                <div class="drag-label">SHELTER</div>
             </div>
             <div class="drag-item" draggable="true" data-type="empalme">
                 <img src="assets/empalme.svg" alt="Empalme" style="max-width: 100%; max-height: 70%;">
-                <div class="drag-label">CAJA DE EMPALME</div>
             </div>
             <div class="drag-item" draggable="true" data-type="optica">
                 <img src="assets/optica.svg" alt="Óptica" style="max-width: 100%; max-height: 70%;">
-                <div class="drag-label">CAJA TERMINAL ÓPTICA</div>
             </div>
         </div>
     </div>
@@ -336,6 +335,7 @@
         // Orden correcto de conexión
         const connectionOrder = ['shelter', 'empalme', 'optica'];
         const buildings = ['wifi', 'policia', 'escuela', 'hospital'];
+        const VICTORY_DELAY_MS = 1500;
         
         // Función para obtener posición de un punto
         function getPointPosition(point) {
@@ -368,7 +368,7 @@
             
             path.setAttribute('d', d);
             path.setAttribute('stroke', color);
-            path.setAttribute('stroke-width', '3');
+            path.setAttribute('stroke-width', '2.5');
             path.setAttribute('fill', 'none');
             path.setAttribute('stroke-linecap', 'round');
             path.setAttribute('filter', 'url(#cable-glow)');
@@ -716,23 +716,27 @@
         }
 
         function showVictory() {
-            const victoryScreen = document.getElementById('victory-screen');
-            const victoryMessage = document.getElementById('victory-message');
-            const victoryImage = document.getElementById('victory-image');
-            
-            const targetInfo = targetMessages[selectedTarget];
-            victoryMessage.textContent = targetInfo.message;
-            victoryImage.src = `assets/${selectedTarget}.svg`;
-            
-            // Crear confetti dinámico
-            createConfetti();
-            
-            victoryScreen.classList.add('active');
-            
-            // Reiniciar automáticamente después de 15 segundos
             setTimeout(() => {
-                restartGame();
-            }, 15000);
+                const victoryScreen = document.getElementById('victory-screen');
+                const victoryMessage = document.getElementById('victory-message');
+                const victoryImage = document.getElementById('victory-image');
+                
+                const targetInfo = targetMessages[selectedTarget];
+                victoryMessage.textContent = targetInfo.message;
+                victoryImage.src = `assets/${selectedTarget}.svg`;
+                victoryImage.className = 'victory-building';
+                victoryImage.classList.add(`victory-building--${selectedTarget}`);
+                
+                // Crear confetti dinámico
+                createConfetti();
+                
+                victoryScreen.classList.add('active');
+                
+                // Reiniciar automáticamente después de 15 segundos
+                setTimeout(() => {
+                    restartGame();
+                }, 15000);
+            }, VICTORY_DELAY_MS);
         }
 
         function restartGame() {

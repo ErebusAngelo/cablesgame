@@ -4,6 +4,14 @@
     box-sizing: border-box;
 }
 
+:root {
+    --wifi-offset-x: 25px;
+    --wifi-offset-y: 90px;
+    --girl-width: clamp(60px, 10vh, 140px);
+    --girl-bottom: clamp(20px, 3.5vh, 50px);
+    --girl-left-default: 5%;
+}
+
 body, html {
     width: 100%;
     height: 100%;
@@ -25,32 +33,23 @@ body, html {
 /* Header */
 .header-game {
     position: absolute;
-    top: 20px;
+    top: 261px;
     left: 30px;
     z-index: 100;
     animation: fadeIn 1s ease-out;
 }
 
 .logo-innova {
-    width: clamp(100px, 12vw, 200px);
+    width: clamp(80px, 15vw, 161px);
     height: auto;
-    margin-bottom: 15px;
+    margin-bottom: 12px;
 }
 
-.instructions {
-    background: rgba(255, 255, 255, 0.95);
-    padding: clamp(15px, 2vw, 25px);
-    border-radius: 10px;
-    max-width: clamp(250px, 35vw, 450px);
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
-}
-
-.instructions h2 {
-    font-size: clamp(16px, 2vw, 24px);
-    line-height: 1.3;
-    color: #333;
-    font-weight: bold;
-    margin: 0;
+.instructions-image {
+    width: clamp(200px, 28vw, 360px);
+    height: auto;
+    display: block;
+    margin-top: clamp(6px, 0.8vh, 12px);
 }
 
 /* Nubes */
@@ -167,31 +166,32 @@ body, html {
 /* Área de juego */
 .game-area {
     position: absolute;
-    top: 25%;
+    top: 16%;
     left: 0;
     width: 100%;
-    height: 75%;
+    height: 84%;
     display: flex;
     flex-direction: column;
 }
 
 .upper-zone {
-    flex: 0 0 40%;
+    flex: 0 0 48%;
     position: relative;
     display: flex;
-    justify-content: center;
+    justify-content: flex-end;
     align-items: flex-end;
-    padding: 0;
-    gap: clamp(30px, 5vw, 80px);
+    padding: 0 0 2% 0px;
+    gap: clamp(20px, 3vw, 50px);
 }
 
 .buildings-zone {
     flex: 1;
     position: relative;
     display: flex;
-    justify-content: space-around;
-    align-items: flex-start;
-    padding: 0 3% 0;
+    justify-content: space-between;
+    align-items: flex-end;
+    padding: 0px 2.5% 34% 3.5%;
+    gap: clamp(2px, 14.3vw, -18px);
 }
 
 .building-container {
@@ -199,10 +199,16 @@ body, html {
     display: flex;
     flex-direction: column;
     align-items: center;
+    flex-shrink: 0;
+    min-width: 0;
+}
+
+.building-container[data-building="wifi"] {
+    transform: translate(var(--wifi-offset-x, 0px), var(--wifi-offset-y, 0px));
 }
 
 .building {
-    height: clamp(100px, 18vh, 250px);
+    height: clamp(60px, 10vh, 130px);
     width: auto;
     opacity: 0;
     animation: slideUp 1s ease-out forwards;
@@ -211,7 +217,8 @@ body, html {
 
 .wifi {
     animation-delay: 0.5s;
-    height: clamp(120px, 32vh, 300px) !important;
+    height: clamp(95px, 19vh, 200px) !important;
+    transform: translateY(12%);
 }
 .policia { animation-delay: 0.7s; }
 .escuela { animation-delay: 0.9s; }
@@ -224,6 +231,7 @@ body, html {
     align-items: center;
     gap: 8px;
     opacity: 0;
+    margin-right: 5%;
     animation: slideUp 1.2s ease-out forwards;
     position: relative;
 }
@@ -240,10 +248,10 @@ body, html {
 /* Puntos de conexión */
 .connection-point {
     position: absolute;
-    width: 20px;
-    height: 20px;
+    width: 18px;
+    height: 18px;
     background: #2196F3;
-    border: 3px solid white;
+    border: 2px solid white;
     border-radius: 50%;
     bottom: 50%;
     left: 50%;
@@ -349,45 +357,43 @@ body, html {
 .pole-container.optica { animation-delay: 1s; }
 
 .pole {
-    height: clamp(120px, 20vh, 280px);
+    height: clamp(85px, 14vh, 170px);
     width: auto;
 }
 
-.pole-label {
-    font-size: clamp(8px, 0.9vw, 11px);
-    font-weight: bold;
-    color: #333;
-    background: rgba(255, 255, 255, 0.95);
-    padding: 4px 10px;
-    border-radius: 5px;
-    white-space: nowrap;
-    text-transform: uppercase;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+.structure-label,
+.building-label {
+    width: clamp(70px, 10vw, 150px);
+    height: auto;
+    margin-bottom: 6px;
+    filter: drop-shadow(0 2px 6px rgba(0, 0, 0, 0.25));
 }
 
 /* Personajes */
 .characters-game {
     position: absolute;
-    bottom: clamp(30px, 5vh, 80px);
+    bottom: clamp(20px, 3.5vh, 50px);
     width: 100%;
-    height: clamp(80px, 14vh, 200px);
+    height: clamp(60px, 10vh, 140px);
     pointer-events: none;
     z-index: 50;
 }
 
 .character-game {
     position: absolute;
-    height: clamp(80px, 14vh, 200px);
+    height: clamp(60px, 10vh, 140px);
     width: auto;
     opacity: 0;
 }
 
-.char-left {
-    animation: slideInLeft 1.5s ease-out 1.3s forwards;
+.character-game.char-1 {
+    height: var(--girl-width);
+    bottom: var(--girl-bottom);
+    left: var(--girl-left, var(--girl-left-default));
 }
 
-.char-1 {
-    left: 5%;
+.char-left {
+    animation: slideInLeft 1.5s ease-out 1.3s forwards;
 }
 
 .char-right {
@@ -395,15 +401,15 @@ body, html {
 }
 
 .char-3 {
-    right: 5%;
+    right: clamp(5%, 8vw, 10%);
 }
 
 .char-special {
     position: fixed;
-    right: 80px;
-    bottom: 490px;
-    height: clamp(80px, 14vh, 200px);
-    width: auto;
+    right: clamp(50px, 17vw, 163px);
+    bottom: clamp(298px, 44vh, 493px);
+    height: clamp(60px, 10vh, 140px);
+    width: 57px;
     animation: slideInRightFlipped 1.5s ease-out 1.6s forwards;
     z-index: 55;
 }
@@ -411,23 +417,22 @@ body, html {
 /* Panel de arrastre */
 .drag-panel {
     position: absolute;
-    left: clamp(30px, 4vw, 60px);
-    top: clamp(220px, 35vh, 320px);
-    background: rgba(255, 255, 255, 0.95);
-    padding: clamp(12px, 1.5vh, 20px);
+    left: clamp(20px, 3vw, 45px);
+    top: clamp(160px, 42vh, 462px);
+    background: transparent;
+    padding: clamp(10px, 1.2vh, 16px);
     border-radius: 15px;
     display: flex;
     flex-direction: row;
-    gap: clamp(12px, 1.5vw, 20px);
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+    gap: clamp(12px, 1.5vw, 18px);
     z-index: 60;
     opacity: 0;
     animation: slideUpPanel 1s ease-out 1.8s forwards;
 }
 
 .drag-item {
-    width: clamp(60px, 8vw, 100px);
-    height: clamp(60px, 8vw, 100px);
+    width: clamp(65px, 8vw, 100px);
+    height: clamp(65px, 8vw, 100px);
     background: white;
     border: 3px solid #ddd;
     border-radius: 10px;
@@ -436,18 +441,6 @@ body, html {
     align-items: center;
     justify-content: center;
     cursor: grab;
-    transition: all 0.3s ease;
-    padding: 8px;
-    gap: 5px;
-}
-
-.drag-label {
-    font-size: clamp(7px, 0.8vw, 10px);
-    font-weight: bold;
-    color: #333;
-    text-align: center;
-    line-height: 1.1;
-    text-transform: uppercase;
 }
 
 .drag-item:hover {
@@ -595,15 +588,6 @@ body, html {
     .drag-item {
         width: 55px;
         height: 55px;
-    }
-
-    .drag-label {
-        font-size: 6px;
-    }
-
-    .pole-label {
-        font-size: 7px;
-        padding: 2px 5px;
     }
 }
 
@@ -873,10 +857,17 @@ body, html {
 }
 
 .victory-building {
-    width: clamp(200px, 30vw, 400px);
+    max-width: clamp(220px, 28vw, 360px);
+    max-height: clamp(180px, 45vh, 420px);
+    width: auto;
     height: auto;
     z-index: 301;
     filter: drop-shadow(0 10px 30px rgba(255, 255, 255, 0.3));
+}
+
+.victory-building--wifi {
+    max-width: clamp(180px, 24vw, 320px);
+    max-height: clamp(150px, 35vh, 360px);
 }
 
 .restart-button {
