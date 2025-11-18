@@ -335,7 +335,7 @@
         // Orden correcto de conexión
         const connectionOrder = ['shelter', 'empalme', 'optica'];
         const buildings = ['wifi', 'policia', 'escuela', 'hospital'];
-        const VICTORY_DELAY_MS = 1500;
+        const VICTORY_DELAY_MS = 3000;
         
         // Función para obtener posición de un punto
         function getPointPosition(point) {
@@ -434,6 +434,12 @@
                 point.classList.add('active');
                 
                 // Intentar conectar
+                const firstPointType = selectedPoint.getAttribute('data-point');
+                const secondPointType = point.getAttribute('data-point');
+                const connectionIsFinal = 
+                    (firstPointType === 'optica' && secondPointType === selectedTarget) ||
+                    (secondPointType === 'optica' && firstPointType === selectedTarget);
+
                 if (canConnect(selectedPoint, point)) {
                     // Animación de éxito en ambos puntos
                     selectedPoint.classList.add('connection-success');
@@ -454,6 +460,11 @@
                         point.classList.remove('active', 'connection-success');
                         point.classList.add('connected');
                         selectedPoint = null;
+                        
+                        // Si es la conexión final, disparar animación de éxito
+                        if (connectionIsFinal) {
+                            triggerFinalSuccessAnimation();
+                        }
                         
                         // Actualizar siguiente en flujo
                         updateNextInFlow();
@@ -742,6 +753,26 @@
         function restartGame() {
             // Volver a la pantalla inicial
             window.location.href = 'index.html';
+        }
+
+        function triggerFinalSuccessAnimation() {
+            // Animar el edificio objetivo con efecto de éxito
+            const targetBuilding = document.querySelector(`[data-building="${selectedTarget}"]`);
+            if (targetBuilding) {
+                targetBuilding.classList.add('final-success-glow');
+            }
+            
+            // Animar todos los cables con efecto de energía
+            const allCablePaths = cablesSvg.querySelectorAll('.cable-path');
+            allCablePaths.forEach(cable => {
+                cable.classList.add('final-energy-flow');
+            });
+            
+            // Efecto de pulso en todos los puntos de conexión conectados
+            const connectedPoints = document.querySelectorAll('.connection-point.connected');
+            connectedPoints.forEach(point => {
+                point.classList.add('final-pulse');
+            });
         }
 
         function createConfetti() {

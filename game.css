@@ -33,14 +33,14 @@ body, html {
 /* Header */
 .header-game {
     position: absolute;
-    top: 261px;
+    top: 220px;
     left: 30px;
     z-index: 100;
     animation: fadeIn 1s ease-out;
 }
 
 .logo-innova {
-    width: clamp(80px, 15vw, 161px);
+    width: clamp(80px, 20vw, 186px);
     height: auto;
     margin-bottom: 12px;
 }
@@ -49,7 +49,7 @@ body, html {
     width: clamp(200px, 28vw, 360px);
     height: auto;
     display: block;
-    margin-top: clamp(6px, 0.8vh, 12px);
+    margin-top: clamp(6px, 9.8vh, 28px);
 }
 
 /* Nubes */
@@ -417,7 +417,7 @@ body, html {
 /* Panel de arrastre */
 .drag-panel {
     position: absolute;
-    left: clamp(20px, 3vw, 45px);
+    left: clamp(15px, -4vw, -2px);
     top: clamp(160px, 42vh, 462px);
     background: transparent;
     padding: clamp(10px, 1.2vh, 16px);
@@ -1045,6 +1045,83 @@ body, html {
 
 .drag-item.next-to-place {
     animation: dragItemPulse 2s ease-in-out infinite;
+}
+
+/* Animación de éxito final al completar el recorrido */
+.final-success-glow {
+    animation: finalBuildingGlow 1.5s ease-out forwards;
+}
+
+@keyframes finalBuildingGlow {
+    0% {
+        filter: drop-shadow(0 0 10px rgba(76, 175, 80, 0.4));
+        transform: scale(1);
+    }
+    30% {
+        filter: drop-shadow(0 0 40px rgba(76, 175, 80, 1)) 
+                drop-shadow(0 0 60px rgba(255, 215, 0, 0.8))
+                brightness(1.3);
+        transform: scale(1.08);
+    }
+    60% {
+        filter: drop-shadow(0 0 50px rgba(76, 175, 80, 1)) 
+                drop-shadow(0 0 80px rgba(255, 215, 0, 1))
+                brightness(1.4);
+        transform: scale(1.1);
+    }
+    100% {
+        filter: drop-shadow(0 0 30px rgba(76, 175, 80, 0.8)) 
+                drop-shadow(0 0 50px rgba(255, 215, 0, 0.6))
+                brightness(1.2);
+        transform: scale(1.05);
+    }
+}
+
+.final-energy-flow {
+    animation: energyPulse 1.5s ease-out forwards;
+}
+
+@keyframes energyPulse {
+    0% {
+        stroke: #2196F3;
+        stroke-width: 3;
+        filter: drop-shadow(0 0 5px rgba(33, 150, 243, 0.5));
+    }
+    50% {
+        stroke: #4CAF50;
+        stroke-width: 5;
+        filter: drop-shadow(0 0 20px rgba(76, 175, 80, 1)) 
+                drop-shadow(0 0 30px rgba(255, 215, 0, 0.8));
+    }
+    100% {
+        stroke: #4CAF50;
+        stroke-width: 4;
+        filter: drop-shadow(0 0 15px rgba(76, 175, 80, 0.8));
+    }
+}
+
+.final-pulse {
+    animation: finalPointPulse 1.5s ease-out forwards;
+}
+
+@keyframes finalPointPulse {
+    0% {
+        background: #4CAF50;
+        transform: scale(1);
+        box-shadow: 0 0 10px rgba(76, 175, 80, 0.5);
+    }
+    40% {
+        background: #FFD700;
+        transform: scale(1.5);
+        box-shadow: 0 0 30px rgba(255, 215, 0, 1),
+                    0 0 50px rgba(76, 175, 80, 0.8);
+    }
+    100% {
+        background: #4CAF50;
+        transform: scale(1.2);
+        box-shadow: 0 0 20px rgba(76, 175, 80, 0.8),
+                    0 0 35px rgba(255, 215, 0, 0.6);
+    }
 }
 
 /* Animación para pole containers que esperan ser llenados */
