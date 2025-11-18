@@ -202,9 +202,9 @@ body, html {
     transition: transform 0.3s ease;
 }
 
-.wifi { 
+.wifi {
     animation-delay: 0.5s;
-    height: clamp(120px, 22vh, 300px) !important;
+    height: clamp(120px, 32vh, 300px) !important;
 }
 .policia { animation-delay: 0.7s; }
 .escuela { animation-delay: 0.9s; }
@@ -218,6 +218,14 @@ body, html {
     gap: 8px;
     opacity: 0;
     animation: slideUp 1.2s ease-out forwards;
+}
+
+.pole-container.visible {
+    opacity: 0.3 !important;
+}
+
+.pole-container.completed {
+    opacity: 1 !important;
 }
 
 .pole-container.shelter { animation-delay: 0.6s; }
