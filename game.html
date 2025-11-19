@@ -264,7 +264,6 @@
                         // Actualizar estado del juego
                         gameState.structuresPlaced[targetType] = true;
                         updateNextInFlow();
-                        checkVictory();
                     } else {
                         // Animación de error
                         container.classList.add('error-feedback');
@@ -305,7 +304,6 @@
                     // Actualizar estado del juego
                     gameState.structuresPlaced[targetType] = true;
                     updateNextInFlow();
-                    checkVictory();
                 } else {
                     // Animación de error
                     container.classList.add('error-feedback');
@@ -388,25 +386,74 @@
             };
         }
         
+        // Función auxiliar para verificar conexiones existentes
+        function hasConnection(from, to) {
+            return gameState.connections.some(c => 
+                (c.from === from && c.to === to) || (c.from === to && c.to === from)
+            );
+        }
+
         // Verificar si se puede conectar
         function canConnect(fromPoint, toPoint) {
             const fromType = fromPoint.getAttribute('data-point');
             const toType = toPoint.getAttribute('data-point');
             
-            // Verificar conexiones entre estructuras
-            const fromIndex = connectionOrder.indexOf(fromType);
-            const toIndex = connectionOrder.indexOf(toType);
+            console.log('=== canConnect ===');
+            console.log('Intentando conectar:', fromType, '->', toType);
+            console.log('Conexiones actuales:', gameState.connections);
+            console.log('Objetivo seleccionado:', selectedTarget);
             
-            if (fromIndex !== -1 && toIndex !== -1) {
-                // Debe ser secuencial: shelter→empalme→optica
-                return toIndex === fromIndex + 1;
-            }
+            // Normalizar orden para manejar ambas direcciones
+            let point1 = fromType;
+            let point2 = toType;
             
-            // Desde óptica a edificios
-            if (fromType === 'optica' && buildings.includes(toType)) {
+            // CASO 1: Shelter -> Empalme (siempre permitido, es el primer paso)
+            if ((point1 === 'shelter' && point2 === 'empalme') || 
+                (point1 === 'empalme' && point2 === 'shelter')) {
+                console.log('✓ CASO 1: Shelter->Empalme permitido');
                 return true;
             }
             
+            // CASO 2: Empalme -> Óptica (requiere Shelter->Empalme)
+            if ((point1 === 'empalme' && point2 === 'optica') || 
+                (point1 === 'optica' && point2 === 'empalme')) {
+                // PRERREQUISITO: Debe existir Shelter->Empalme
+                const hasShelterEmpalme = hasConnection('shelter', 'empalme');
+                console.log('CASO 2: Empalme->Optica. Tiene Shelter->Empalme?', hasShelterEmpalme);
+                if (!hasShelterEmpalme) {
+                    console.log('✗ RECHAZADO: Falta Shelter->Empalme');
+                    return false;
+                }
+                console.log('✓ CASO 2: Empalme->Optica permitido');
+                return true;
+            }
+            
+            // CASO 3: Óptica -> Edificio (requiere Empalme->Óptica Y debe ser el objetivo)
+            if ((point1 === 'optica' && buildings.includes(point2)) || 
+                (point2 === 'optica' && buildings.includes(point1))) {
+                
+                // PRERREQUISITO 1: Debe existir Empalme->Óptica
+                const hasEmpalmeOptica = hasConnection('empalme', 'optica');
+                console.log('CASO 3: Optica->Edificio. Tiene Empalme->Optica?', hasEmpalmeOptica);
+                if (!hasEmpalmeOptica) {
+                    console.log('✗ RECHAZADO: Falta Empalme->Optica');
+                    return false;
+                }
+                
+                // PRERREQUISITO 2: El edificio debe ser el objetivo seleccionado
+                const buildingType = point1 === 'optica' ? point2 : point1;
+                console.log('Edificio intentado:', buildingType, 'vs objetivo:', selectedTarget);
+                if (buildingType !== selectedTarget) {
+                    console.log('✗ RECHAZADO: Edificio incorrecto');
+                    return false;
+                }
+                
+                console.log('✓ CASO 3: Optica->Edificio permitido');
+                return true;
+            }
+            
+            // Cualquier otra conexión no es válida
+            console.log('✗ RECHAZADO: Conexión no válida');
             return false;
         }
         
@@ -415,6 +462,20 @@
             const handleSelect = (e) => {
                 e.preventDefault();
                 e.stopPropagation();
+                
+                // VALIDACIÓN CRÍTICA: Verificar que la estructura esté colocada
+                const pointType = point.getAttribute('data-point');
+                const structureTypes = ['shelter', 'empalme', 'optica'];
+                
+                // Si el punto pertenece a una estructura (no edificio), verificar que esté colocada
+                if (structureTypes.includes(pointType)) {
+                    if (!gameState.structuresPlaced[pointType]) {
+                        console.log('✗ Punto bloqueado: estructura', pointType, 'no colocada');
+                        point.classList.add('connection-error');
+                        setTimeout(() => point.classList.remove('connection-error'), 400);
+                        return;
+                    }
+                }
                 
                 // Si no hay punto seleccionado
                 if (!selectedPoint) {
@@ -430,12 +491,36 @@
                     return;
                 }
                 
+                // VALIDACIÓN CRÍTICA: Verificar que la estructura del segundo punto esté colocada
+                const secondPointType = point.getAttribute('data-point');
+                if (structureTypes.includes(secondPointType)) {
+                    if (!gameState.structuresPlaced[secondPointType]) {
+                        console.log('✗ Conexión bloqueada: estructura', secondPointType, 'no colocada');
+                        point.classList.add('connection-error');
+                        setTimeout(() => point.classList.remove('connection-error'), 400);
+                        return;
+                    }
+                }
+                
+                // VALIDACIÓN DE PRERREQUISITOS ANTES DE PERMITIR LA CONEXIÓN
+                const firstPointType = selectedPoint.getAttribute('data-point');
+                
+                // Verificar si esta conexión sería válida usando canConnect
+                const wouldBeValid = canConnect(selectedPoint, point);
+                
+                if (!wouldBeValid) {
+                    // Conexión inválida - NO cambiar la selección, solo mostrar error
+                    console.log('✗ BLOQUEADO: Conexión no válida. Mantener selección actual.');
+                    point.classList.add('connection-error');
+                    setTimeout(() => point.classList.remove('connection-error'), 400);
+                    // NO cambiar selectedPoint, mantener el actual
+                    return;
+                }
+                
                 // Marcar el segundo punto como activo también
                 point.classList.add('active');
                 
                 // Intentar conectar
-                const firstPointType = selectedPoint.getAttribute('data-point');
-                const secondPointType = point.getAttribute('data-point');
                 const connectionIsFinal = 
                     (firstPointType === 'optica' && secondPointType === selectedTarget) ||
                     (secondPointType === 'optica' && firstPointType === selectedTarget);
@@ -455,15 +540,23 @@
                             to: cable.to
                         });
                         
+                        // Limpiar estado del punto anterior
                         selectedPoint.classList.remove('active', 'connection-success');
                         selectedPoint.classList.add('connected');
-                        point.classList.remove('active', 'connection-success');
-                        point.classList.add('connected');
-                        selectedPoint = null;
                         
-                        // Si es la conexión final, disparar animación de éxito
+                        // Configurar el nuevo punto
+                        point.classList.remove('connection-success');
+                        point.classList.add('connected');
+                        
+                        // Si es la conexión final, disparar animación de éxito y limpiar selección
                         if (connectionIsFinal) {
+                            point.classList.remove('active');
+                            selectedPoint = null;
                             triggerFinalSuccessAnimation();
+                        } else {
+                            // AUTO-SELECCIÓN: El punto destino pasa a ser el seleccionado para la siguiente conexión
+                            selectedPoint = point;
+                            point.classList.add('active');
                         }
                         
                         // Actualizar siguiente en flujo
@@ -473,12 +566,17 @@
                         checkVictory();
                     }, 500);
                 } else {
-                    // Conexión inválida - quitar active del punto incorrecto
+                    // Conexión inválida
                     point.classList.remove('active');
-                    // Mantener el primer punto seleccionado
-                    selectedPoint.classList.remove('active');
-                    selectedPoint = point;
-                    point.classList.add('active');
+                    
+                    // Animación de error en el punto tocado
+                    point.classList.add('connection-error');
+                    setTimeout(() => {
+                        point.classList.remove('connection-error');
+                    }, 400);
+                    
+                    // NO cambiamos la selección, mantenemos el primer punto seleccionado
+                    // para que el usuario pueda intentar conectar con el correcto
                 }
             };
             
@@ -700,12 +798,21 @@
         }
 
         function checkVictory() {
+            console.log('=== checkVictory ===');
+            console.log('Estructuras colocadas:', gameState.structuresPlaced);
+            console.log('Conexiones:', gameState.connections);
+            console.log('Objetivo:', selectedTarget);
+            
             // Verificar que las 3 estructuras estén colocadas
             const allStructuresPlaced = gameState.structuresPlaced.shelter && 
                                        gameState.structuresPlaced.empalme && 
                                        gameState.structuresPlaced.optica;
             
-            if (!allStructuresPlaced) return false;
+            console.log('Todas las estructuras colocadas?', allStructuresPlaced);
+            if (!allStructuresPlaced) {
+                console.log('✗ Victoria rechazada: Faltan estructuras');
+                return false;
+            }
 
             // Verificar conexiones necesarias
             const hasConnection = (from, to) => {
@@ -718,11 +825,17 @@
             const empalmeToOptica = hasConnection('empalme', 'optica');
             const opticaToTarget = hasConnection('optica', selectedTarget);
 
+            console.log('Shelter->Empalme?', shelterToEmpalme);
+            console.log('Empalme->Optica?', empalmeToOptica);
+            console.log('Optica->' + selectedTarget + '?', opticaToTarget);
+
             if (shelterToEmpalme && empalmeToOptica && opticaToTarget) {
+                console.log('✓✓✓ VICTORIA! Mostrando pantalla...');
                 showVictory();
                 return true;
             }
 
+            console.log('✗ Victoria rechazada: Faltan conexiones');
             return false;
         }
 

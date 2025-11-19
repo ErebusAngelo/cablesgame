@@ -1,0 +1,433 @@
+/* Pantalla de Juego */
+#juego-screen {
+    background-image: url('../assets/fondo2.png');
+    background-size: cover;
+    background-position: center center;
+    background-repeat: no-repeat;
+    position: relative;
+    overflow: hidden;
+}
+
+/* Cielo y elementos decorativos */
+.sky-layer {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 40%;
+    z-index: 1;
+}
+
+.sol {
+    position: absolute;
+    top: 8%;
+    right: 8%;
+    width: clamp(60px, 8vw, 120px);
+    animation: rotateSun 20s linear infinite;
+}
+
+.nubes {
+    position: absolute;
+    width: clamp(100px, 15vw, 200px);
+    opacity: 0.9;
+}
+
+.nube-1 {
+    top: 5%;
+    left: 10%;
+    animation: floatCloud 30s ease-in-out infinite;
+}
+
+.nube-2 {
+    top: 15%;
+    right: 20%;
+    animation: floatCloud 25s ease-in-out infinite 5s;
+}
+
+.pajaro {
+    position: absolute;
+    width: clamp(20px, 3vw, 40px);
+}
+
+.pajaro-1 {
+    top: 10%;
+    left: 30%;
+    animation: flyBird 15s ease-in-out infinite;
+}
+
+.pajaro-2 {
+    top: 20%;
+    right: 40%;
+    animation: flyBird 18s ease-in-out infinite 3s;
+}
+
+.pajaro-3 {
+    top: 12%;
+    left: 60%;
+    animation: flyBird 20s ease-in-out infinite 7s;
+}
+
+/* Header del juego */
+.game-header {
+    position: absolute;
+    top: 3vh;
+    left: 4vw;
+    z-index: 10;
+    animation: fadeInDown 0.8s ease-out;
+}
+
+.logo-juego {
+    width: clamp(80px, 10vw, 150px);
+    margin-bottom: 1vh;
+}
+
+.instrucciones {
+    font-family: Arial, sans-serif;
+    font-size: clamp(12px, 1.5vw, 20px);
+    font-weight: 700;
+    color: #000;
+    line-height: 1.3;
+}
+
+.instrucciones p {
+    margin: 0;
+}
+
+/* Área de infraestructura */
+.infrastructure-area {
+    position: absolute;
+    top: 30%;
+    left: 0;
+    width: 100%;
+    height: 25%;
+    z-index: 5;
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-around;
+    padding: 0 5vw;
+}
+
+.structure {
+    position: relative;
+    animation: fadeInUp 0.8s ease-out backwards;
+}
+
+.shelter-container {
+    animation-delay: 0.2s;
+}
+
+.shelter {
+    width: clamp(100px, 15vw, 250px);
+    height: auto;
+}
+
+.empalme-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5vh;
+}
+
+.empalme-1 {
+    animation-delay: 0.3s;
+}
+
+.empalme-2 {
+    animation-delay: 0.4s;
+}
+
+.empalme-container img {
+    width: clamp(60px, 10vw, 150px);
+    height: auto;
+}
+
+.label {
+    background: white;
+    padding: clamp(4px, 0.5vh, 8px) clamp(8px, 1vw, 16px);
+    border-radius: 4px;
+    font-size: clamp(8px, 1vw, 14px);
+    font-weight: 700;
+    text-align: center;
+    white-space: nowrap;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.chicaynena {
+    animation-delay: 0.5s;
+}
+
+.chicaynena img {
+    width: clamp(80px, 12vw, 180px);
+    height: auto;
+}
+
+/* Área de edificios */
+.buildings-area {
+    position: absolute;
+    bottom: 25%;
+    left: 0;
+    width: 100%;
+    height: 25%;
+    z-index: 4;
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-around;
+    padding: 0 5vw;
+}
+
+.building {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5vh;
+    animation: fadeInUp 0.8s ease-out backwards;
+}
+
+.wifi-building {
+    animation-delay: 0.3s;
+}
+
+.policia-building {
+    animation-delay: 0.4s;
+}
+
+.escuela-building {
+    animation-delay: 0.5s;
+}
+
+.hospital-building {
+    animation-delay: 0.6s;
+}
+
+.building-img {
+    width: clamp(80px, 12vw, 180px);
+    height: auto;
+}
+
+/* Área de césped */
+.grass-area {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 25%;
+    z-index: 3;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 8vw;
+}
+
+.character-game {
+    animation: fadeInUp 0.8s ease-out backwards;
+}
+
+.chico-perro {
+    animation-delay: 0.4s;
+}
+
+.chico-perro img {
+    width: clamp(70px, 10vw, 150px);
+}
+
+.chica-corriendo {
+    animation-delay: 0.5s;
+}
+
+.chica-corriendo img {
+    width: clamp(70px, 10vw, 150px);
+}
+
+/* Panel lateral de elementos arrastrables */
+.draggable-panel {
+    position: absolute;
+    left: 2vw;
+    top: 50%;
+    transform: translateY(-50%);
+    display: flex;
+    flex-direction: column;
+    gap: 2vh;
+    background: rgba(255, 255, 255, 0.9);
+    padding: 2vh 1vw;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    z-index: 20;
+    animation: slideInLeft 0.8s ease-out 0.6s backwards;
+}
+
+.draggable-item {
+    width: clamp(50px, 6vw, 80px);
+    height: clamp(50px, 6vw, 80px);
+    background: white;
+    border: 2px solid #ddd;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: grab;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+}
+
+.draggable-item:hover {
+    transform: scale(1.1);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    border-color: #F27321;
+}
+
+.draggable-item:active {
+    cursor: grabbing;
+}
+
+.draggable-item img {
+    width: 80%;
+    height: 80%;
+    object-fit: contain;
+}
+
+/* Animaciones */
+@keyframes fadeInDown {
+    from {
+        opacity: 0;
+        transform: translateY(-30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(40px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes slideInLeft {
+    from {
+        opacity: 0;
+        transform: translateX(-100px) translateY(-50%);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0) translateY(-50%);
+    }
+}
+
+@keyframes rotateSun {
+    from {
+        transform: rotate(0deg);
+    }
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+@keyframes floatCloud {
+    0%, 100% {
+        transform: translateX(0) translateY(0);
+    }
+    50% {
+        transform: translateX(30px) translateY(-10px);
+    }
+}
+
+@keyframes flyBird {
+    0%, 100% {
+        transform: translateX(0) translateY(0);
+    }
+    25% {
+        transform: translateX(20px) translateY(-15px);
+    }
+    50% {
+        transform: translateX(40px) translateY(-5px);
+    }
+    75% {
+        transform: translateX(20px) translateY(-20px);
+    }
+}
+
+/* Responsive */
+@media (max-width: 1024px) {
+    .game-header {
+        top: 2vh;
+        left: 3vw;
+    }
+
+    .infrastructure-area,
+    .buildings-area {
+        padding: 0 3vw;
+    }
+
+    .grass-area {
+        padding: 0 5vw;
+    }
+
+    .draggable-panel {
+        left: 1vw;
+        padding: 1.5vh 0.8vw;
+        gap: 1.5vh;
+    }
+}
+
+@media (max-width: 768px) {
+    .instrucciones {
+        font-size: clamp(10px, 2vw, 16px);
+    }
+
+    .infrastructure-area {
+        flex-wrap: wrap;
+        height: 30%;
+    }
+
+    .buildings-area {
+        flex-wrap: wrap;
+        height: 30%;
+    }
+
+    .draggable-panel {
+        flex-direction: row;
+        left: 50%;
+        top: auto;
+        bottom: 2vh;
+        transform: translateX(-50%);
+        gap: 1vw;
+    }
+}
+
+/* Optimización para pantallas ultra anchas (tipo LIDAR) */
+@media (min-width: 1920px) {
+    .logo-juego {
+        width: clamp(120px, 9vw, 180px);
+    }
+
+    .instrucciones {
+        font-size: clamp(16px, 1.3vw, 24px);
+    }
+
+    .shelter {
+        width: clamp(150px, 14vw, 280px);
+    }
+
+    .empalme-container img {
+        width: clamp(80px, 9vw, 180px);
+    }
+
+    .building-img {
+        width: clamp(100px, 11vw, 220px);
+    }
+
+    .chico-perro img,
+    .chica-corriendo img {
+        width: clamp(90px, 9vw, 180px);
+    }
+
+    .chicaynena img {
+        width: clamp(100px, 11vw, 220px);
+    }
+}
