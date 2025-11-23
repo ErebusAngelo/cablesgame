@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tu Primera Conexión</title>
+    <title>Lidar Test - Tu Primera Conexión</title>
     <style>
         * {
             margin: 0;
@@ -16,6 +16,16 @@
             height: 100%;
             overflow: hidden;
             font-family: 'Arial', sans-serif;
+        }
+
+        /* Canvas Overlay Styles */
+        canvas {
+            display: block;
+            position: absolute;
+            top: 0;
+            left: 0;
+            z-index: 9999; /* Ensure it's on top of everything */
+            pointer-events: none; /* Allow clicks to pass through to the UI */
         }
 
         .container {
@@ -40,7 +50,7 @@
             justify-content: center;
             align-items: center;
             gap: clamp(30px, 5vw, 100px);
-            padding: clamp(100px, 37vh, 271px) clamp(20px, 3vw, 60px) clamp(20px, 2vh, 40px);
+            padding: clamp(60px, 8vh, 120px) clamp(20px, 3vw, 60px) clamp(20px, 2vh, 40px);
             animation: fadeInDown 1s ease-out;
         }
 
@@ -65,9 +75,8 @@
         }
 
         .btn-comenzar {
-            margin-bottom: 206px;
             cursor: pointer;
-            width: clamp(320px, 35vw, 600px);
+            width: clamp(250px, 25vw, 500px);
             height: auto;
             opacity: 0;
             animation: fadeInScale 1.5s ease-out 0.8s forwards, pulseGlow 2.5s ease-in-out 2s infinite;
@@ -99,26 +108,12 @@
             opacity: 0;
         }
 
-        :root {
-            --landing-girl-width: clamp(120px, 20vh, 400px);
-            --landing-girl-bottom: clamp(30px, 14vh, 141px);
-            --landing-girl-right: clamp(20px, 5vw, 120px);
-            --landing-girl-animation-delay: 1s;
+        .chica {
+            animation: slideInLeft 1.5s ease-out 1s forwards;
         }
 
-        .character.chica {
-            height: var(--landing-girl-width);
-            position: absolute;
-            right: var(--landing-girl-right);
-            bottom: var(--landing-girl-bottom);
-            animation: slideInRight 1.5s ease-out var(--landing-girl-animation-delay) forwards;
-        }
-
-        .character.chico {
-            position: absolute;
-            left: clamp(20px, 5vw, 120px);
-            bottom: clamp(30px, 4vh, 80px);
-            animation: slideInLeft 1.5s ease-out 1.2s forwards;
+        .chico {
+            animation: slideInRight 1.5s ease-out 1.2s forwards;
         }
 
         /* Animaciones */
@@ -249,8 +244,8 @@
 
         <!-- Personajes -->
         <div class="characters">
-            <img src="assets/inicio/chico.svg" alt="Chico" class="character chico">
             <img src="assets/inicio/chica.svg" alt="Chica" class="character chica">
+            <img src="assets/inicio/chico.svg" alt="Chico" class="character chico">
         </div>
     </div>
 
@@ -265,89 +260,20 @@
         });
 
         // Optimización para pantallas táctiles
-        document.querySelector('.btn-comenzar').addEventListener('touchstart', function() {
-            this.style.transform = 'scale(0.98)';
-        });
+        const btn = document.querySelector('.btn-comenzar');
+        if(btn) {
+            btn.addEventListener('touchstart', function() {
+                this.style.transform = 'scale(0.98)';
+            });
 
-        document.querySelector('.btn-comenzar').addEventListener('touchend', function() {
-            this.style.transform = 'scale(1)';
-        });
+            btn.addEventListener('touchend', function() {
+                this.style.transform = 'scale(1)';
+            });
+        }
     </script>
-<!-- Code injected by live-server -->
-<script>
-	// <![CDATA[  <-- For SVG support
-	if ('WebSocket' in window) {
-		(function () {
-			function refreshCSS() {
-				var sheets = [].slice.call(document.getElementsByTagName("link"));
-				var head = document.getElementsByTagName("head")[0];
-				for (var i = 0; i < sheets.length; ++i) {
-					var elem = sheets[i];
-					var parent = elem.parentElement || head;
-					parent.removeChild(elem);
-					var rel = elem.rel;
-					if (elem.href && typeof rel != "string" || rel.length == 0 || rel.toLowerCase() == "stylesheet") {
-						var url = elem.href.replace(/(&|\?)_cacheOverride=\d+/, '');
-						elem.href = url + (url.indexOf('?') >= 0 ? '&' : '?') + '_cacheOverride=' + (new Date().valueOf());
-					}
-					parent.appendChild(elem);
-				}
-			}
-			var protocol = window.location.protocol === 'http:' ? 'ws://' : 'wss://';
-			var address = protocol + window.location.host + window.location.pathname + '/ws';
-			var socket = new WebSocket(address);
-			socket.onmessage = function (msg) {
-				if (msg.data == 'reload') window.location.reload();
-				else if (msg.data == 'refreshcss') refreshCSS();
-			};
-			if (sessionStorage && !sessionStorage.getItem('IsThisFirstTime_Log_From_LiveServer')) {
-				console.log('Live reload enabled.');
-				sessionStorage.setItem('IsThisFirstTime_Log_From_LiveServer', true);
-			}
-		})();
-	}
-	else {
-		console.error('Upgrade your browser. This Browser is NOT supported WebSocket for Live-Reloading.');
-	}
-	// ]]>
-</script>
-<!-- Code injected by live-server -->
-<script>
-	// <![CDATA[  <-- For SVG support
-	if ('WebSocket' in window) {
-		(function () {
-			function refreshCSS() {
-				var sheets = [].slice.call(document.getElementsByTagName("link"));
-				var head = document.getElementsByTagName("head")[0];
-				for (var i = 0; i < sheets.length; ++i) {
-					var elem = sheets[i];
-					var parent = elem.parentElement || head;
-					parent.removeChild(elem);
-					var rel = elem.rel;
-					if (elem.href && typeof rel != "string" || rel.length == 0 || rel.toLowerCase() == "stylesheet") {
-						var url = elem.href.replace(/(&|\?)_cacheOverride=\d+/, '');
-						elem.href = url + (url.indexOf('?') >= 0 ? '&' : '?') + '_cacheOverride=' + (new Date().valueOf());
-					}
-					parent.appendChild(elem);
-				}
-			}
-			var protocol = window.location.protocol === 'http:' ? 'ws://' : 'wss://';
-			var address = protocol + window.location.host + window.location.pathname + '/ws';
-			var socket = new WebSocket(address);
-			socket.onmessage = function (msg) {
-				if (msg.data == 'reload') window.location.reload();
-				else if (msg.data == 'refreshcss') refreshCSS();
-			};
-			if (sessionStorage && !sessionStorage.getItem('IsThisFirstTime_Log_From_LiveServer')) {
-				console.log('Live reload enabled.');
-				sessionStorage.setItem('IsThisFirstTime_Log_From_LiveServer', true);
-			}
-		})();
-	}
-	else {
-		console.error('Upgrade your browser. This Browser is NOT supported WebSocket for Live-Reloading.');
-	}
-	// ]]>
-</script>
+
+    <script src="js/p5.min2.js"></script>
+    <script src="js/pointserver.js"></script>
+    <script src="js/sketch.js"></script>
 </body>
 </html>
